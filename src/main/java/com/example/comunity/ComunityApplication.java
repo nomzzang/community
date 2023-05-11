@@ -8,6 +8,9 @@ public class ComunityApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ComunityApplication.class, args);
+
+        // 커밋테스트
+        System.out.print("asd");
     }
 
 }
