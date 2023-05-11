@@ -5,7 +5,7 @@
 ## 툴
 
 - IntelliJ Ultimate
-- MariaDB
+- MariaDB -> MongoDB 변경 2023.05.12 변경 이유 Analyzing Performance Differences Between MySQL and MongoDB 논문 참고
 - Java jdk 11
 
 ## 프로젝트 기능 및 설계
