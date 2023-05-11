@@ -42,8 +42,8 @@
     - 사용자는 댓글 내용(텍스트)를 작성할 수 있다.
 
 ## ERD
+![화면 캡처 2023-05-10 011620](https://github.com/nomzzang/community/assets/56585155/681776d5-1a12-4f4c-afc3-29e0be094c05)
 
-![erd](https://user-images.githubusercontent.com/56585155/236390589-18065cf7-bbeb-4c74-848c-8c2e67cbfa71.png)
 
 ## Trouble Shooting
 
