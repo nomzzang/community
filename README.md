@@ -5,6 +5,7 @@
 ## 툴
 
 - IntelliJ Ultimate
+- Spring boot  2.6.4
 - MariaDB -> MongoDB 변경 2023.05.12 변경 이유 Analyzing Performance Differences Between MySQL and MongoDB 논문 참고
 - Java jdk 11
 

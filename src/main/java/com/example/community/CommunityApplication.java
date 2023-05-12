@@ -1,16 +1,15 @@
-package com.example.comunity;
+package com.example.community;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+
 @SpringBootApplication
-public class ComunityApplication {
+public class CommunityApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ComunityApplication.class, args);
+        SpringApplication.run(CommunityApplication.class, args);
 
-        // 커밋테스트
-        System.out.print("asd");
     }
 
 }
