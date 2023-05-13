@@ -10,12 +10,13 @@ import com.mongodb.client.result.UpdateResult;
 import lombok.RequiredArgsConstructor;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -26,45 +27,57 @@ public class MongoRestController {
 
     private static final String COLLECTION = "members";
     private final MongoDatabase mongoDatabase;
+    private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
     @GetMapping("/find")
-    public void find() {
+    public List<Document> find() {
         MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
 
         FindIterable<Document> doc = collection.find();
+        List<Document> results = new ArrayList<>();
 
-        Iterator itr = doc.iterator();
+        Iterator<Document> itr = doc.iterator();
 
         while (itr.hasNext()) {
-            System.out.println("==> findResultRow : " + itr.next());
+            Document document = itr.next();
+            System.out.println("==> findResultRow : " + document);
+            results.add(document);
         }
+        return results;
     }
 
-    @GetMapping("/insert")
-    public void insertOne(){
-        MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
+//    @GetMapping("/find-id")
+//    public void findById(@RequestParam String name){
+//        MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
+//
+//        Document doc = collection.find(eq("name");
+//        System.out.println("doc = " + doc);
+//    }
 
-        Document document = new Document();
 
-        document.append("name", "kyu");
-        document.append("age", "33");
 
-        InsertOneResult result = collection.insertOne(document);
-        System.out.println("result : " + result.getInsertedId());
+    @PostMapping("/insert")
+    public void insert(@RequestBody @Valid Member member) {
+
+        memberService.addMember(member);
+
     }
 
     @GetMapping("/update")
-    public void update(@RequestParam String name) {
+    public void update(@RequestParam String name, String rename) {
 
         System.out.println("name = " + name);
+        System.out.println("rename = " + rename);
 
         MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
 
         Bson query = eq("name", name);
 
         Bson updates = Updates.combine(
-                Updates.set("name", "test1"),
-                Updates.currentTimestamp("lastUpdated"));
+                Updates.set("name", rename),
+                Updates.set("lastUpdated", LocalDateTime.now().minusHours(9)));
+//                Updates.currentTimestamp("lastUpdated"));
 
         UpdateResult result = collection.updateOne(query, updates);
         System.out.println("UpdateResult : " + result.getModifiedCount());
@@ -72,12 +85,11 @@ public class MongoRestController {
     }
 
     @GetMapping("/delete")
-    public void delete(@RequestParam String name){
+    public void delete(@RequestParam String name) {
 
         MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
         System.out.println("name = " + name);
         Bson query = eq("name", name);
-
         DeleteResult result = collection.deleteOne(query);
         System.out.println("Result = " + result.getDeletedCount());
     }
