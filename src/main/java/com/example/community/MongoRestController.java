@@ -1,97 +1,83 @@
 package com.example.community;
 
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Updates;
-import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.InsertOneResult;
-import com.mongodb.client.result.UpdateResult;
-import lombok.RequiredArgsConstructor;
-import org.bson.Document;
-import org.bson.conversions.Bson;
-import org.springframework.web.bind.annotation.*;
-
+import java.time.LocalDate;
 import javax.validation.Valid;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import static com.mongodb.client.model.Filters.eq;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
 @RequiredArgsConstructor
 public class MongoRestController {
 
-    private static final String COLLECTION = "members";
-    private final MongoDatabase mongoDatabase;
-    private final MemberService memberService;
-    private final MemberRepository memberRepository;
+  private final MemberService memberService;
+  private final MemberRepository memberRepository;
 
-    @GetMapping("/find")
-    public List<Document> find() {
-        MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
+  @GetMapping("/findAll")
+  public void findAll(Member member) {
+    memberService.findAllMember(member);
+  }
 
-        FindIterable<Document> doc = collection.find();
-        List<Document> results = new ArrayList<>();
+  @GetMapping("/find-id")
+  public void findId(@RequestBody Member member) {
+    memberService.findMemberId(member);
+  }
 
-        Iterator<Document> itr = doc.iterator();
+  //다큐먼트로 묶어서 입력
+  @GetMapping("/insert")
+  public void insert(@RequestBody @Valid Member member) {
+    memberService.addMember(member);
+  }
 
-        while (itr.hasNext()) {
-            Document document = itr.next();
-            System.out.println("==> findResultRow : " + document);
-            results.add(document);
-        }
-        return results;
+  // RDBMS 이용한 사용자 입력
+  @PostMapping("/insert2")
+  public Member insertRepository(@RequestBody @Valid Member member) {
+
+    Member findUserId = memberRepository.findByUserId(member.getUserId());
+    if (findUserId != null) {
+      throw new IllegalStateException("이미 가입된 아이디입니다.");
     }
 
-//    @GetMapping("/find-id")
-//    public void findById(@RequestParam String name){
-//        MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
-//
-//        Document doc = collection.find(eq("name");
-//        System.out.println("doc = " + doc);
-//    }
-
-
-
-    @PostMapping("/insert")
-    public void insert(@RequestBody @Valid Member member) {
-
-        memberService.addMember(member);
-
+    Member findMember = memberRepository.findByEmail(member.getEmail());
+    if (findMember != null) {
+      throw new IllegalStateException("이미 가입된 이메일입니다.");
     }
 
-    @GetMapping("/update")
-    public void update(@RequestParam String name, String rename) {
+    Member createmember = Member.builder()
+        .userId(member.getUserId())
+        .password(member.getPassword())
+        .email(member.getEmail())
+        .status(member.getStatus())
+        .userServiceYn(member.getUserServiceYn())
+        .userInformationYn(member.getUserInformationYn())
+        .registerDt(LocalDate.now())
+        .changeDt(LocalDate.now())
+        .postCnt(member.getPostCnt())
+        .build();
 
-        System.out.println("name = " + name);
-        System.out.println("rename = " + rename);
+    return memberRepository.save(createmember);
 
-        MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
+  }
 
-        Bson query = eq("name", name);
+  @GetMapping("/update")
+  public void update(@RequestBody Member member) {
 
-        Bson updates = Updates.combine(
-                Updates.set("name", rename),
-                Updates.set("lastUpdated", LocalDateTime.now().minusHours(9)));
-//                Updates.currentTimestamp("lastUpdated"));
+    memberService.update(member);
 
-        UpdateResult result = collection.updateOne(query, updates);
-        System.out.println("UpdateResult : " + result.getModifiedCount());
+  }
 
-    }
+  @GetMapping("/delete")
+  public void delete(@RequestBody Member member) {
 
-    @GetMapping("/delete")
-    public void delete(@RequestParam String name) {
+    memberService.delete(member);
+  }
 
-        MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
-        System.out.println("name = " + name);
-        Bson query = eq("name", name);
-        DeleteResult result = collection.deleteOne(query);
-        System.out.println("Result = " + result.getDeletedCount());
-    }
+  @GetMapping("/login")
+  public void login(@RequestBody Member member) {
+    memberService.login(member);
+  }
 }
 

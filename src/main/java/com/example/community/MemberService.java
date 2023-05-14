@@ -1,55 +1,132 @@
 package com.example.community;
 
+import static com.mongodb.client.model.Filters.eq;
+
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.model.Updates;
+import java.time.LocalDateTime;
+import java.util.Iterator;
 import lombok.RequiredArgsConstructor;
 import org.bson.Document;
-import org.springframework.dao.DuplicateKeyException;
+import org.bson.conversions.Bson;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-    private static final String COLLECTION = "members";
-    private final MongoDatabase mongoDatabase;
-    private final MemberRepository memberRepository;
 
-    private void validateDuplicateMember(Member member){
-        Optional<Member> findMember = memberRepository.findById(member.getId());
+  private static final String COLLECTION = "test";
+  private final MongoDatabase mongoDatabase;
 
-        System.out.println("실행");
+  public void notFoundUserId(Member member) {
+    MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
+    Document checkUserId = new Document("userId", member.getUserId());
+    Document checkUserIdResult = collection.find(checkUserId).first();
+    if (checkUserIdResult == null) {
+      throw new IllegalStateException("존재하지않는 아이디입니다.");
+    }
+  }
 
-        if(findMember.isPresent()){
-            System.out.println("중복 검사");
-        }
-        if(findMember!=null){
-            System.out.println("중복 검사22222");
-            System.out.println(findMember);
-        }
+  public void checkUserId(Member member) {
+    MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
+    Document checkUserId = new Document("userId", member.getUserId());
+    Document checkUserIdResult = collection.find(checkUserId).first();
+    if (checkUserIdResult != null) {
+      throw new IllegalStateException("가입된 아이디입니다.");
+    }
+  }
+
+  public void checkEmail(Member member) {
+    MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
+    Document checkEmail = new Document("email", member.getEmail());
+    Document checkEmailResult = collection.find(checkEmail).first();
+    if (checkEmailResult != null) {
+      throw new IllegalStateException("가입된 이메일입니다.");
+    }
+  }
+
+  //Document 를 이용한 회원 등록
+  public void addMember(Member member) {
+    MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
+    Document document = new Document();
+
+    checkUserId(member);
+    checkEmail(member);
+
+    Document checkEmail = new Document("email", member.getEmail());
+    Document checkEmailResult = collection.find(checkEmail).first();
+    if (checkEmailResult != null) {
+      throw new IllegalStateException("가입된 이메일입니다.");
     }
 
-    public void addMember(Member member){
-        MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
-        Document document = new Document();
+    document.append("userId", member.getUserId());
+    document.append("password", member.getPassword());
+    document.append("email", member.getEmail());
+    document.append("status", member.getStatus());
+    document.append("userInformationYn", member.getUserInformationYn());
+    document.append("userServiceYn", member.getUserServiceYn());
+    document.append("registerDt", LocalDateTime.now());
+    document.append("changeDt", LocalDateTime.now());
+    document.append("postCnt", 0);
 
-        validateDuplicateMember(member);
+    collection.insertOne(document);
+//        System.out.println("result : " + result.getInsertedId());
+  }
 
-        document.append("id", member.getId());
-        document.append("mbr_stat", "NORMAL");
-        document.append("mbr_pwd", member.getMbr_pwd());
-        document.append("mbr_email", member.getMbr_email());
-        document.append("mbr_svc_use_pcy_agmt_yn", member.getMbr_svc_use_pcy_agmt_yn());
-        document.append("mbr_ps.info_proc_agmt_yn", member.getMbr_ps_info_proc_agmt_yn());
-        document.append("reg_dt", LocalDateTime.now());
-        document.append("chg_dt", LocalDateTime.now());
-        document.append("mbr_count", 0);
+  public void findAllMember(Member member) {
+    MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
 
-        InsertOneResult result = collection.insertOne(document);
-        System.out.println("result : " + result.getInsertedId());
+    FindIterable<Document> doc = collection.find();
 
+    Iterator itr = doc.iterator();
+
+    while (itr.hasNext()) {
+      System.out.println("==> findResultRow : " + itr.next());
     }
+  }
+
+  public void findMemberId(Member member) {
+    MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
+
+    Document doc = collection.find(eq("userId", member.getUserId())).first();
+    System.out.println("doc = " + doc);
+  }
+
+  public void update(Member member) {
+    MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
+
+    Bson query = eq("userId", member.getUserId());
+    Bson updates = Updates.combine(
+        Updates.set("password", member.getPassword()),
+        Updates.set("changeDt", LocalDateTime.now().minusHours(9)));
+
+    collection.updateOne(query, updates);
+    System.out.println("수정이 완료되었습니다. ");
+
+  }
+
+  public void delete(Member member) {
+    MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
+
+    Bson query = eq("userId", member.getUserId());
+    collection.deleteOne(query);
+    System.out.println(member.getUserId() + "삭제 완료 되었습니다.");
+  }
+
+  public void login(Member member) {
+    MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
+
+    notFoundUserId(member);
+
+    Bson filter = eq("userId", member.getUserId());
+    Document result = collection.find(filter).first();
+    String password = result.getString("password");
+    if (password.equals(member.getPassword())) {
+      System.out.println("로그인이 완료되었습니다.");
+    } else {
+      throw new IllegalStateException("비밀번호가 일치하지 않습니다. ");
+    }
+  }
 }
