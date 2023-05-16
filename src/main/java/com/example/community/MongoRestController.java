@@ -26,7 +26,7 @@ public class MongoRestController {
     memberService.findMemberId(member);
   }
 
-  //다큐먼트로 묶어서 입력
+
   @GetMapping("/insert")
   public void insert(@RequestBody @Valid Member member) {
     memberService.addMember(member);
