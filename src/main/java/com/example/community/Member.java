@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Member {
-
+// pr test
   @Id
   @NotBlank(message = "아이디를 입력해주세요")
   private String userId;
