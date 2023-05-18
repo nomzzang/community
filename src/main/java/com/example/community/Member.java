@@ -33,4 +33,5 @@ public class Member {
   private LocalDate registerDt;
   private LocalDate changeDt;
   private Integer postCnt;
+
 }
