@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Member {
-// pr test
+// pr test test
   @Id
   @NotBlank(message = "아이디를 입력해주세요")
   private String userId;
@@ -33,4 +33,5 @@ public class Member {
   private LocalDate registerDt;
   private LocalDate changeDt;
   private Integer postCnt;
+
 }
