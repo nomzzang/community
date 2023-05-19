@@ -1,7 +1,8 @@
-package com.example.community;
+package com.example.community.Member.Service;
 
 import static com.mongodb.client.model.Filters.eq;
 
+import com.example.community.Member.Entity.Member;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -11,6 +12,7 @@ import java.util.Iterator;
 import lombok.RequiredArgsConstructor;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +21,7 @@ public class MemberService {
 
   private static final String COLLECTION = "test";
   private final MongoDatabase mongoDatabase;
+  private final PasswordEncoder passwordEncoder;
 
   public void notFoundUserId(Member member) {
     MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
@@ -62,7 +65,8 @@ public class MemberService {
     }
 
     document.append("userId", member.getUserId());
-    document.append("password", member.getPassword());
+    document.append("password", passwordEncoder.encode(member.getPassword()));
+//    document.append("password", member.getPassword());
     document.append("email", member.getEmail());
     document.append("status", member.getStatus());
     document.append("userInformationYn", member.getUserInformationYn());
@@ -122,8 +126,14 @@ public class MemberService {
 
     Bson filter = eq("userId", member.getUserId());
     Document result = collection.find(filter).first();
+
+    // 저장된 비밀번호
     String password = result.getString("password");
-    if (password.equals(member.getPassword())) {
+
+    // 입력된 비밀번호
+    String inputPassword = member.getPassword();
+
+    if (passwordEncoder.matches(inputPassword, password)) {
       System.out.println("로그인이 완료되었습니다.");
     } else {
       throw new IllegalStateException("비밀번호가 일치하지 않습니다. ");

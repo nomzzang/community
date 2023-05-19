@@ -1,4 +1,4 @@
-package com.example.community;
+package com.example.community.Member.Entity;
 
 import java.time.LocalDate;
 import javax.validation.constraints.Email;
@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Member {
-// pr test test
+
   @Id
   @NotBlank(message = "아이디를 입력해주세요")
   private String userId;

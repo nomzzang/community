@@ -1,5 +1,8 @@
-package com.example.community;
+package com.example.community.Member.Controller;
 
+import com.example.community.Member.Entity.Member;
+import com.example.community.Member.Repository.MemberRepository;
+import com.example.community.Member.Service.MemberService;
 import java.time.LocalDate;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;

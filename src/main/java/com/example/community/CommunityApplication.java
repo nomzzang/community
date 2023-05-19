@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class CommunityApplication {
-// test branch
+// 2023.05.19
     public static void main(String[] args) {
         SpringApplication.run(CommunityApplication.class, args);
 

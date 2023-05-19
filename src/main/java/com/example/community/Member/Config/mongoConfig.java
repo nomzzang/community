@@ -1,4 +1,4 @@
-package com.example.community;
+package com.example.community.Member.Config;
 
 
 import com.mongodb.client.MongoClient;
@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+
 public class mongoConfig {
 
   private static final String URI = "mongodb://localhost:27017";
@@ -20,5 +21,6 @@ public class mongoConfig {
     return database;
 
   }
+
 
 }
