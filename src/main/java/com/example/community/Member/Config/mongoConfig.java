@@ -21,6 +21,4 @@ public class mongoConfig {
     return database;
 
   }
-
-
 }

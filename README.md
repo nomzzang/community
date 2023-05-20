@@ -8,6 +8,7 @@
 - Spring boot  2.6.4
 - MariaDB -> MongoDB 변경 2023.05.12 변경 이유 Analyzing Performance Differences Between MySQL and MongoDB 논문 참고
 - Java jdk 11
+- Security 2.6.3
 
 ## 프로젝트 기능 및 설계
 

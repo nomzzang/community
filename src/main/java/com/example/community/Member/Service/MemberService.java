@@ -2,12 +2,16 @@ package com.example.community.Member.Service;
 
 import static com.mongodb.client.model.Filters.eq;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.example.community.Member.Entity.Member;
+import com.example.community.Member.Model.UserLoginToken;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Updates;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Iterator;
 import lombok.RequiredArgsConstructor;
 import org.bson.Document;
@@ -126,6 +130,7 @@ public class MemberService {
 
     Bson filter = eq("userId", member.getUserId());
     Document result = collection.find(filter).first();
+    String email = result.getString("email");
 
     // 저장된 비밀번호
     String password = result.getString("password");
@@ -138,5 +143,19 @@ public class MemberService {
     } else {
       throw new IllegalStateException("비밀번호가 일치하지 않습니다. ");
     }
+
+    LocalDateTime expiredDateTime = LocalDateTime.now().plusDays(7);
+    Date expiredDateDate = java.sql.Timestamp.valueOf(expiredDateTime);
+
+    //토큰발행
+    String token = JWT.create()
+        .withExpiresAt(expiredDateDate)
+        .withClaim("userId", member.getUserId())
+        .withIssuer(email)
+        .sign(Algorithm.HMAC512("kyu".getBytes()));
+
+    UserLoginToken.builder().token(token).build();
+
+    System.out.print(token);
   }
 }

@@ -28,8 +28,12 @@ public class MongoRestController {
   public void findId(@RequestBody Member member) {
     memberService.findMemberId(member);
   }
+  @PostMapping("/insert")
+  public void postInsert(@RequestBody @Valid Member member) {
+    memberService.addMember(member);
+  }
   @GetMapping("/insert")
-  public void insert(@RequestBody @Valid Member member) {
+  public void getInsert(@RequestBody @Valid Member member) {
     memberService.addMember(member);
   }
 
