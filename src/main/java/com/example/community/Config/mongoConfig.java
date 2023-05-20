@@ -1,4 +1,4 @@
-package com.example.community.Member.Config;
+package com.example.community.Config;
 
 
 import com.mongodb.client.MongoClient;
@@ -16,6 +16,7 @@ public class mongoConfig {
 
   @Bean
   public MongoDatabase mongoDatabase() {
+
     MongoClient mongoClient = MongoClients.create(URI);
     MongoDatabase database = mongoClient.getDatabase(DATABASE);
     return database;

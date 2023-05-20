@@ -1,6 +1,6 @@
 package com.example.community.Member.Controller;
 
-import com.example.community.Member.Entity.Member;
+import com.example.community.Member.Model.Member;
 import com.example.community.Member.Repository.MemberRepository;
 import com.example.community.Member.Service.MemberService;
 import java.time.LocalDate;
@@ -55,7 +55,7 @@ public class MongoRestController {
         .userId(member.getUserId())
         .password(member.getPassword())
         .email(member.getEmail())
-        .status(member.getStatus())
+        .memberStatus(member.getMemberStatus())
         .userServiceYn(member.getUserServiceYn())
         .userInformationYn(member.getUserInformationYn())
         .registerDt(LocalDate.now())

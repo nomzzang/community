@@ -4,8 +4,9 @@ import static com.mongodb.client.model.Filters.eq;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.example.community.Member.Entity.Member;
-import com.example.community.Member.Model.UserLoginToken;
+import com.example.community.Member.Model.Member;
+import com.example.community.Member.Sequence.MemberBoardSequenceGeneratorService;
+import com.example.community.Member.Token.UserLoginToken;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -26,6 +27,7 @@ public class MemberService {
   private static final String COLLECTION = "test";
   private final MongoDatabase mongoDatabase;
   private final PasswordEncoder passwordEncoder;
+  private final MemberBoardSequenceGeneratorService memberBoardSequenceGeneratorService;
 
   public void notFoundUserId(Member member) {
     MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
@@ -68,11 +70,12 @@ public class MemberService {
       throw new IllegalStateException("가입된 이메일입니다.");
     }
 
+    document.append("_id", memberBoardSequenceGeneratorService.generateSequence(member.getId()));
     document.append("userId", member.getUserId());
     document.append("password", passwordEncoder.encode(member.getPassword()));
 //    document.append("password", member.getPassword());
     document.append("email", member.getEmail());
-    document.append("status", member.getStatus());
+    document.append("status", member.getMemberStatus());
     document.append("userInformationYn", member.getUserInformationYn());
     document.append("userServiceYn", member.getUserServiceYn());
     document.append("registerDt", LocalDateTime.now());
@@ -91,7 +94,7 @@ public class MemberService {
     Iterator itr = doc.iterator();
 
     while (itr.hasNext()) {
-      System.out.println("==> findResultRow : " + itr.next());
+      System.out.println(itr.next());
     }
   }
 

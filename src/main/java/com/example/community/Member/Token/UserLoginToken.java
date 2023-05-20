@@ -1,4 +1,4 @@
-package com.example.community.Member.Model;
+package com.example.community.Member.Token;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
