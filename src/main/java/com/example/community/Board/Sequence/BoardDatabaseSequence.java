@@ -11,6 +11,6 @@ public class BoardDatabaseSequence {
   @Id
   private String id;
 
-  private long seq;
+  private long boardSeq;
 
 }

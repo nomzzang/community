@@ -1,4 +1,4 @@
-package com.example.community.Board.Sequence;
+package com.example.community.Comment.Sequence;
 
 import static org.springframework.data.mongodb.core.FindAndModifyOptions.options;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
@@ -12,16 +12,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class BoardSequenceGeneratorService {
+public class CommentSequenceGeneratorService {
 
   private MongoOperations mongoOperations;
 
   public long generateSequence(String seqName) {
-    BoardDatabaseSequence counter = mongoOperations.findAndModify(query(where("_id").is(seqName)),
-    new Update().inc("boardSeq", 1), options().returnNew(true).upsert(true),
-        BoardDatabaseSequence.class);
+    CommentDatabaseSequence counter = mongoOperations.findAndModify(query(where("_id").is(seqName)),
+    new Update().inc("CommentSeq", 1), options().returnNew(true).upsert(true),
+        CommentDatabaseSequence.class);
 
-    return !Objects.isNull(counter) ? counter.getBoardSeq() : 1;
+    return !Objects.isNull(counter) ? counter.getCommentSeq() : 1;
 
   }
 

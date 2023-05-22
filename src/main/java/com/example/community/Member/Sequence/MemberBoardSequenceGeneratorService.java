@@ -18,10 +18,10 @@ public class MemberBoardSequenceGeneratorService {
 
   public long generateSequence(String seqName) {
     MemberDatabaseSequence counter = mongoOperations.findAndModify(query(where("_id").is(seqName)),
-    new Update().inc("seq", 1), options().returnNew(true).upsert(true),
+    new Update().inc("memberSeq", 1), options().returnNew(true).upsert(true),
         MemberDatabaseSequence.class);
 
-    return !Objects.isNull(counter) ? counter.getSeq() : 1;
+    return !Objects.isNull(counter) ? counter.getMemberSeq() : 1;
 
   }
 
