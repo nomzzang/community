@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -28,16 +29,14 @@ public class MongoRestController {
   public void findId(@RequestBody Member member) {
     memberService.findMemberId(member);
   }
-  @PostMapping("/insert")
-  public void postInsert(@RequestBody @Valid Member member) {
-    memberService.addMember(member);
-  }
-  @GetMapping("/insert")
+
+  // PostMapping로 하게 되면 에러가 발생해서 RequestMapping 으로 해놨습니다.
+  @RequestMapping("/insert")
   public void getInsert(@RequestBody @Valid Member member) {
     memberService.addMember(member);
   }
 
-  // RDBMS 이용한 사용자 입력
+  // 레포시토리 이용한 사용자 입력
   @PostMapping("/insert2")
   public Member insertRepository(@RequestBody @Valid Member member) {
 

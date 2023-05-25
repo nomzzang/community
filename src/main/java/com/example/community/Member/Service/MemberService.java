@@ -108,6 +108,8 @@ public class MemberService {
   public void update(Member member) {
     MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
 
+    notFoundUserId(member);
+
     Bson query = eq("userId", member.getUserId());
     Bson updates = Updates.combine(
         Updates.set("password", member.getPassword()),
@@ -120,6 +122,8 @@ public class MemberService {
 
   public void delete(Member member) {
     MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
+
+    notFoundUserId(member);
 
     Bson query = eq("userId", member.getUserId());
     collection.deleteOne(query);
