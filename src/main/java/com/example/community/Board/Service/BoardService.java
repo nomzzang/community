@@ -2,6 +2,7 @@ package com.example.community.Board.Service;
 
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.inc;
 
 import com.example.community.Board.Model.Board;
 import com.example.community.Board.Sequence.BoardSequenceGeneratorService;
@@ -42,6 +43,7 @@ public class BoardService {
 
     collection.insertOne(document);
   }
+
   public void findAllBoard() {
     MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
 
@@ -54,12 +56,21 @@ public class BoardService {
     }
   }
 
+  //제목을 기준으로 게시물을 요청했을대 게시물에 내용을 가져오고 조회수(boardCnt)를 하나 올려준다.
   public void findBoard(@RequestBody Board board) {
     MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
 
     Document doc = collection.find(eq("title", board.getTitle())).first();
     System.out.println("doc = " + doc);
+
+    Bson updateOperation = inc("boardCnt", 1);
+    collection.updateOne(doc, updateOperation);
+
+    Object boardCnt = doc.get("boardCnt");
+    System.out.println("Board Count: " + boardCnt);
+
   }
+
   public void updateBoard(@RequestBody Board board) {
 
     MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
@@ -72,7 +83,8 @@ public class BoardService {
     collection.updateOne(query, updates);
     System.out.println("수정이 완료되었습니다. ");
   }
-  public void deleteBoard(@RequestBody Board board){
+
+  public void deleteBoard(@RequestBody Board board) {
     MongoCollection<Document> collection = mongoDatabase.getCollection(COLLECTION);
 
     Bson query = eq("title", board.getTitle());
