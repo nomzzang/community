@@ -10,6 +10,8 @@ public class CommunityApplication {
     public static void main(String[] args) {
         SpringApplication.run(CommunityApplication.class, args);
 
+        // pr test 입니다.
+
     }
 
 }
