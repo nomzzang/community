@@ -11,7 +11,9 @@ public class CommunityApplication {
         SpringApplication.run(CommunityApplication.class, args);
 
         // pr test 입니다.
-
+        //prprprprprprp
+        // 작업 시작
+        // 작업 끝
     }
 
 }
